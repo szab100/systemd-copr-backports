@@ -81,7 +81,8 @@ Requires:       %{name}-pam = %{version}-%{release}
 Requires:       %{name}-libs = %{version}-%{release}
 Requires:       diffutils
 Requires:       util-linux
-Requires:       libxkbcommon%{?_isa}
+# don't explicitly require libxkbcommon
+#Requires:       libxkbcommon%{?_isa}
 Provides:       /bin/systemctl
 Provides:       /sbin/shutdown
 Provides:       syslog
