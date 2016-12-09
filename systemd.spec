@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        231
-Release:        2.fb3
+Release:        3.fb3
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -51,7 +51,7 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  qrencode-devel
 BuildRequires:  libmicrohttpd-devel
-BuildRequires:  libxkbcommon-devel
+#BuildRequires:  libxkbcommon-devel
 BuildRequires:  iptables-devel
 BuildRequires:  libxslt
 BuildRequires:  docbook-style-xsl
