@@ -187,8 +187,9 @@ Requires:       kmod >= 18-4
 # obsolete parent package so that dnf will install new subpackage on upgrade (#1260394)
 Obsoletes:      %{name} < 229-5
 # libgudev1 compatibility
-Provides:       libgudev1 = %{version}
+#Provides:       libgudev1 = %{version}
 Obsoletes:      libgudev1 < %{version}
+Requires:       libgudev = 230
 Provides:       udev = %{version}
 Obsoletes:      udev < 183
 License:        LGPLv2+
