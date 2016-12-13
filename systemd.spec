@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        231
-Release:        3.fb3
+Release:        4.fb3
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -51,7 +51,7 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  qrencode-devel
 BuildRequires:  libmicrohttpd-devel
-#BuildRequires:  libxkbcommon-devel
+BuildRequires:  libxkbcommon-devel
 BuildRequires:  iptables-devel
 BuildRequires:  libxslt
 BuildRequires:  docbook-style-xsl
@@ -113,6 +113,7 @@ Patch8: build-sys--conditionally-disable-LTO-if-requested.patch
 Patch9: logind--accept-empty-string-and--infinity--for-UserTasksMax.patch
 Patch10: core--add-cgroup-CPU-controller-support-on-the-unified-hierarchy.patch
 Patch11: core--introduce-UseRootFileSystemNamespace-option.patch
+Patch12: build-sys-check-for-lz4-in-the-old-and-new-numbering.patch
 
 
 
@@ -376,9 +377,8 @@ install -Dm0644 %{SOURCE9} %{buildroot}%{_pkgdocdir}/
 
 %find_lang %{name}
 
-# TODO TEMP
-#%check
-#make check VERBOSE=1 || { cat test-suite.log; exit 1; }
+%check
+make check VERBOSE=1 || { cat test-suite.log; exit 1; }
 
 # Check for botched translations (https://bugzilla.redhat.com/show_bug.cgi?id=1226566)
 test -z "$(grep -L xml:lang %{buildroot}%{_datadir}/polkit-1/actions/org.freedesktop.*.policy)"
