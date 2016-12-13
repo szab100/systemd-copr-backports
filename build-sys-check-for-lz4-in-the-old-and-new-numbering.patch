@@ -22,9 +22,9 @@ diff --git a/configure.ac b/configure.ac
 index 65eaae1..5979de4 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -621,10 +621,13 @@ AM_CONDITIONAL(HAVE_BZIP2, [test "$have_bzip2" = "yes"])
+@@ -616,10 +616,13 @@ AM_CONDITIONAL(HAVE_BZIP2, [test "$have_
  have_lz4=no
- AC_ARG_ENABLE(lz4, AS_HELP_STRING([--disable-lz4], [disable optional LZ4 support]))
+ AC_ARG_ENABLE(lz4, AS_HELP_STRING([--disable-lz4], [Disable optional LZ4 support]))
  AS_IF([test "x$enable_lz4" != "xno"], [
 -        PKG_CHECK_MODULES(LZ4, [ liblz4 >= 125 ],
 -               [AC_DEFINE(HAVE_LZ4, 1, [Define in LZ4 is available])
@@ -42,3 +42,6 @@ index 65eaae1..5979de4 100644
 -- 
 2.7.4
 
+diff -rup /tmp/systemd-231/configure.ac /tmp/systemd-231-new/configure.ac
+--- /tmp/systemd-231/configure.ac	2016-12-13 13:54:25.000000000 +0100
++++ /tmp/systemd-231-new/configure.ac	2016-12-13 13:58:11.708247554 +0100
