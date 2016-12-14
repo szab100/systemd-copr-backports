@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        231
-Release:        5.fb3
+Release:        6.fb3
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -23,6 +23,8 @@ Source0:        https://github.com/systemd/systemd/archive/v%{version}.tar.gz#/%
 # This file must be available before %prep.
 # It is generated during systemd build and can be found in src/core/.
 Source1:        triggers.systemd
+# SysV convert script.
+Source3:        systemd-sysv-convert
 
 # Prevent accidental removal of the systemd package
 Source4:        yum-protect-systemd.conf
@@ -177,6 +179,14 @@ Obsoletes:      libudev-devel < 183
 Development headers and auxiliary files for developing applications linking
 to libudev or libsystemd.
 
+%package sysv
+Summary:        SysV tools for systemd
+License:        LGPLv2+
+Requires:       %{name} = %{version}-%{release}
+
+%description sysv
+SysV compatibility tools for systemd
+
 %package udev
 Summary: Rule-based device node and kernel event manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
@@ -312,6 +322,9 @@ ln -s ../bin/systemctl %{buildroot}%{_sbindir}/poweroff
 ln -s ../bin/systemctl %{buildroot}%{_sbindir}/shutdown
 ln -s ../bin/systemctl %{buildroot}%{_sbindir}/telinit
 ln -s ../bin/systemctl %{buildroot}%{_sbindir}/runlevel
+
+# Install SysV conversion tool for systemd
+install -m 0755 %{SOURCE3} %{buildroot}%{_bindir}/
 
 # Compatiblity and documentation files
 touch %{buildroot}/etc/crypttab
@@ -839,6 +852,9 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_libdir}/pkgconfig/libsystemd-journal.pc
 %{_libdir}/pkgconfig/libsystemd-id128.pc
 %{_mandir}/man3/*
+
+%files sysv
+%{_bindir}/systemd-sysv-convert
 
 %files udev
 %dir %{_sysconfdir}/udev
