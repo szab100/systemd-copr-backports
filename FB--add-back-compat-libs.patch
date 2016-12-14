@@ -80,7 +80,7 @@ index 0c27f81..40138b2 100644
 +
 +libsystemd_journal_la_LIBADD = \
 +	libsystemd-journal-internal.la \
-+	libsystemd-internal.la \
++	libsystemd-internal.la
 +
 +nodist_libsystemd_login_la_SOURCES = \
 +	libsystemd-login.c
