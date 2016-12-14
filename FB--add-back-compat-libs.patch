@@ -48,7 +48,7 @@ index 0c27f81..40138b2 100644
  # Dirs of external packages
  dbuspolicydir=@dbuspolicydir@
  dbussessionservicedir=@dbussessionservicedir@
-@@ -5999,6 +6017,136 @@ EXTRA_DIST += \
+@@ -5999,6 +6017,131 @@ EXTRA_DIST += \
  	test/loopy.service.d/compat.conf
  
  # ------------------------------------------------------------------------------
@@ -81,9 +81,7 @@ index 0c27f81..40138b2 100644
 +libsystemd_journal_la_LIBADD = \
 +	libsystemd-journal-internal.la \
 +	libsystemd-internal.la \
-+	libbasic.la \
-+	$(libsystemd_journal_internal_la_LIBADD) \
-+	$(libsystemd_internal_la_LIBADD)
++	libbasic.la
 +
 +nodist_libsystemd_login_la_SOURCES = \
 +	libsystemd-login.c
@@ -102,8 +100,7 @@ index 0c27f81..40138b2 100644
 +
 +libsystemd_login_la_LIBADD = \
 +	 libsystemd-internal.la \
-+	 libbasic.la \
-+	 $(libsystemd_internal_la_LIBADD)
++	 libbasic.la
 +
 +nodist_libsystemd_id128_la_SOURCES = \
 +	libsystemd-id128.c
@@ -122,8 +119,7 @@ index 0c27f81..40138b2 100644
 +
 +libsystemd_id128_la_LIBADD = \
 +	 libsystemd-internal.la \
-+	 libbasic.la \
-+	 $(libsystemd_internal_la_LIBADD)
++	 libbasic.la
 +
 +nodist_libsystemd_daemon_la_SOURCES = \
 +	libsystemd-daemon.c
@@ -142,8 +138,7 @@ index 0c27f81..40138b2 100644
 +
 +libsystemd_daemon_la_LIBADD = \
 +	 libsystemd-internal.la \
-+	 libbasic.la \
-+	 $(libsystemd_internal_la_LIBADD)
++	 libbasic.la
 +
 +lib_LTLIBRARIES += \
 +	libsystemd-journal.la \
