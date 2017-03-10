@@ -293,6 +293,8 @@ CONFIGURE_OPTS=(
         --with-rc-local-script-path-start=/etc/rc.d/rc.local
         --without-kill-user-processes
         --disable-lto
+        ## JSYNACEK
+        --without-python
 )
 
 %configure \
