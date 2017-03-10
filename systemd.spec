@@ -12,8 +12,8 @@
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        231
-Release:        6.fb3
+Version:        233
+Release:        1.rh7
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -250,17 +250,17 @@ systemd-journal-remote, and systemd-journal-upload.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
+#%patch2 -p1
+#%patch3 -p1
 %patch4 -p1
-%patch5 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
-%patch12 -p1
+### rev %patch5 -p1
+### rev %patch6 -p1
+#%patch7 -p1
+#%patch8 -p1
+### rev %patch9 -p1
+### rev %patch10 -p1
+#%patch11 -p1
+#%patch12 -p1
 
 
 
