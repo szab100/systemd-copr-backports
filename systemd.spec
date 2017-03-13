@@ -300,6 +300,7 @@ CONFIGURE_OPTS=(
         --without-kill-user-processes
         --disable-lto
         ## JSYNACEK
+        --with-dbuspolicydir=/etc/dbus-1/system.d
         --without-python
 )
 
@@ -877,7 +878,8 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{system_unit_dir}/*hwdb*
 %{system_unit_dir}/*/*hwdb*
 %{system_unit_dir}/systemd-vconsole-setup.service
-%{system_unit_dir}/*/systemd-vconsole-setup.service
+### JSYNACEK - this disappeared
+#%{system_unit_dir}/*/systemd-vconsole-setup.service
 %{system_unit_dir}/kmod-static-nodes.service
 %{system_unit_dir}/*/kmod-static-nodes.service
 %{system_unit_dir}/systemd-tmpfiles-setup-dev.service
