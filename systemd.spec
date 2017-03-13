@@ -105,16 +105,22 @@ Conflicts:      fedora-release < 23-0.12
 
 Patch0: 0998-resolved-create-etc-resolv-conf-symlink-at-runtime-patch.patch
 Patch1: kernel-install-grubby-patch.patch
+#
 Patch2: FB--add-back-compat-libs.patch
+#
 Patch3: FB--Add-FusionIO-device---dev-fio--persistent-storage-udev-rule.patch
 Patch4: tests--skip-udev-test-if-running-inside-a-chroot.patch
 Patch5: tests--don-t-test-hostname-if-it-looks-like-an-id128.patch
 Patch6: tests--skip-process-1-tests-if-systemd-not-is-running.patch
+#
 Patch7: tests--don-t-run-private-device-tests-if-running-in-a-container.patch
+#
 Patch8: build-sys--conditionally-disable-LTO-if-requested.patch
 Patch9: logind--accept-empty-string-and--infinity--for-UserTasksMax.patch
 Patch10: core--add-cgroup-CPU-controller-support-on-the-unified-hierarchy.patch
+#
 Patch11: core--introduce-UseRootFileSystemNamespace-option.patch
+#
 Patch12: build-sys-check-for-lz4-in-the-old-and-new-numbering.patch
 
 
