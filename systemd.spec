@@ -135,7 +135,6 @@ Patch12: build-sys-check-for-lz4-in-the-old-and-new-numbering.patch
 
 
 
-
 %description
 systemd is a system and service manager for Linux, compatible with
 SysV and LSB init scripts. systemd provides aggressive parallelization
@@ -566,6 +565,16 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 
 %global _docdir_fmt %{name}
 
+###### JSYNACEK - new files
+ #/usr/bin/systemd-mount
+ #/usr/bin/systemd-umount
+ #/usr/lib/environment.d/99-environment.conf
+ #/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
+ #/usr/lib64/libnss_systemd.so.2
+ #/etc/systemd/system/dbus-org.freedesktop.resolve1.service
+ #/usr/share/polkit-1/rules.d/systemd-networkd.rules
+ #/var/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
+######
 %files -f %{name}.lang
 %{!?_licensedir:%global license %%doc}
 %doc %{_pkgdocdir}
@@ -588,6 +597,7 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %exclude %{pkgdir}/system-generators/systemd-gpt-auto-generator
 %exclude %{pkgdir}/system-generators/systemd-hibernate-resume-generator
 %{pkgdir}/user-generators
+%exclude %{pkgdir}/user-environment-generators/30-systemd-environment-d-generator
 %dir %{pkgdir}/system-shutdown
 %dir %{pkgdir}/system-sleep
 %dir %{pkgdir}/catalog
@@ -671,6 +681,8 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_bindir}/hostnamectl
 %{_bindir}/localectl
 %{_bindir}/timedatectl
+%{_bindir}/systemd-mount
+%{_bindir}/systemd-umount
 %{pkgdir}/systemd
 %{pkgdir}/libsystemd-shared-%{version}.so
 %{system_unit_dir}
@@ -746,6 +758,7 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_prefix}/lib/sysctl.d/50-coredump.conf
 %{_prefix}/lib/sysusers.d/basic.conf
 %{_prefix}/lib/sysusers.d/systemd.conf
+%{_prefix}/lib/environment.d/99-environment.conf
 %{pkgdir}/system-preset/90-systemd.preset
 %{pkgdir}/catalog/systemd.catalog
 %{_prefix}/lib/kernel/install.d/50-depmod.install
@@ -819,9 +832,17 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 
 %ghost %dir %{_localstatedir}/lib/rpm-state/systemd
 
+ #/etc/systemd/system/dbus-org.freedesktop.resolve1.service
+ #/usr/share/polkit-1/rules.d/systemd-networkd.rules
+ #/var/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
+%{_sysconfdir}/systemd/system/dbus-org.freedesktop.resolve1.service
+%{_datadir}/polkit-1/rules.d/systemd-networkd.rules
+%{_localstatedir}/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
+
 %files libs
 %{_libdir}/libnss_myhostname.so.2
 %{_libdir}/libnss_resolve.so.2
+%{_libdir}/libnss_systemd.so.2
 %{_libdir}/libudev.so.*
 %{_libdir}/libsystemd.so.*
 %license LICENSE.LGPL2.1
