@@ -53,7 +53,7 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  qrencode-devel
 BuildRequires:  libmicrohttpd-devel
-BuildRequires:  libxkbcommon-devel
+#BuildRequires:  libxkbcommon-devel
 BuildRequires:  iptables-devel
 BuildRequires:  libxslt
 BuildRequires:  docbook-style-xsl
