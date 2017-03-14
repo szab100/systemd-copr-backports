@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        233
-Release:        1.rh7
+Release:        0.1.rh7
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -154,16 +154,16 @@ Conflicts:      systemd < 185-4
 %description libs
 Libraries for systemd and udev.
 
-%package compat-libs
-Summary:        systemd compatibility libraries
-License:        LGPLv2+ and MIT
-# To reduce confusion, this package can only be installed in parallel
-# with the normal systemd-libs, same version.
-Requires:       systemd-libs%{?_isa} = %{version}-%{release}
+#%package compat-libs
+#Summary:        systemd compatibility libraries
+#License:        LGPLv2+ and MIT
+## To reduce confusion, this package can only be installed in parallel
+## with the normal systemd-libs, same version.
+#Requires:       systemd-libs%{?_isa} = %{version}-%{release}
 
-%description compat-libs
-Compatibility libraries for systemd. If your package requires this
-package, you need to update your link options and build.
+#%description compat-libs
+#Compatibility libraries for systemd. If your package requires this
+#package, you need to update your link options and build.
 
 %package pam
 Summary:        systemd PAM module
@@ -177,7 +177,7 @@ Summary:        Development headers for systemd
 License:        LGPLv2+ and MIT
 # We need both libsystemd and libsystemd-<compat> libraries
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
-Requires:       %{name}-compat-libs%{?_isa} = %{version}-%{release}
+#Requires:       %{name}-compat-libs%{?_isa} = %{version}-%{release}
 Provides:       libudev-devel = %{version}
 Obsoletes:      libudev-devel < 183
 
@@ -299,15 +299,14 @@ CONFIGURE_OPTS=(
         --with-rc-local-script-path-start=/etc/rc.d/rc.local
         --without-kill-user-processes
         --disable-lto
+	--disable-xkbcommon
         ## JSYNACEK
         --with-dbuspolicydir=/etc/dbus-1/system.d
         --without-python
+        ##--enable-compat-libs
 )
 
-%configure \
-        "${CONFIGURE_OPTS[@]}" \
-        --enable-compat-libs \
-	--disable-xkbcommon
+%configure "${CONFIGURE_OPTS[@]}"
 make %{?_smp_mflags} GCC_COLORS="" V=1
 
 %install
@@ -515,8 +514,8 @@ fi
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
-%post compat-libs -p /sbin/ldconfig
-%postun compat-libs -p /sbin/ldconfig
+#%post compat-libs -p /sbin/ldconfig
+#%postun compat-libs -p /sbin/ldconfig
 
 %global udev_services systemd-udev{d,-settle,-trigger}.service systemd-udevd-{control,kernel}.socket systemd-timesyncd.service
 
@@ -827,11 +826,12 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_libdir}/libsystemd.so.*
 %license LICENSE.LGPL2.1
 
-%files compat-libs
-%{_libdir}/libsystemd-daemon.so.*
-%{_libdir}/libsystemd-login.so.*
-%{_libdir}/libsystemd-journal.so.*
-%{_libdir}/libsystemd-id128.so.*
+### JSYNACEK - tmp
+#%files compat-libs
+#%{_libdir}/libsystemd-daemon.so.*
+#%{_libdir}/libsystemd-login.so.*
+#%{_libdir}/libsystemd-journal.so.*
+#%{_libdir}/libsystemd-id128.so.*
 
 %files pam
 %{_libdir}/security/pam_systemd.so
