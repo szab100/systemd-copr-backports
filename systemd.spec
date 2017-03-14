@@ -176,7 +176,7 @@ Summary:        Development headers for systemd
 License:        LGPLv2+ and MIT
 # We need both libsystemd and libsystemd-<compat> libraries
 Requires:       %{name}-libs%{?_isa} = %{version}-%{release}
-#Requires:       %{name}-compat-libs%{?_isa} = %{version}-%{release}
+Requires:       %{name}-compat-libs%{?_isa} = %{version}-%{release}
 Provides:       libudev-devel = %{version}
 Obsoletes:      libudev-devel < 183
 
@@ -877,11 +877,10 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_includedir}/libudev.h
 %{_libdir}/pkgconfig/libudev.pc
 %{_libdir}/pkgconfig/libsystemd.pc
-### JSYNACEK - compat
-#%{_libdir}/pkgconfig/libsystemd-daemon.pc
-#%{_libdir}/pkgconfig/libsystemd-login.pc
-#%{_libdir}/pkgconfig/libsystemd-journal.pc
-#%{_libdir}/pkgconfig/libsystemd-id128.pc
+%{_libdir}/pkgconfig/libsystemd-daemon.pc
+%{_libdir}/pkgconfig/libsystemd-login.pc
+%{_libdir}/pkgconfig/libsystemd-journal.pc
+%{_libdir}/pkgconfig/libsystemd-id128.pc
 %{_mandir}/man3/*
 
 %files sysv
