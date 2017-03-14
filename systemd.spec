@@ -681,7 +681,7 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %exclude %{system_unit_dir}/*hwdb*
 %exclude %{system_unit_dir}/*/*hwdb*
 %exclude %{system_unit_dir}/systemd-vconsole-setup.service
-%exclude %{system_unit_dir}/*/systemd-vconsole-setup.service
+########%exclude %{system_unit_dir}/*/systemd-vconsole-setup.service
 %exclude %{system_unit_dir}/kmod-static-nodes.service
 %exclude %{system_unit_dir}/*/kmod-static-nodes.service
 %exclude %{system_unit_dir}/systemd-tmpfiles-setup-dev.service
@@ -840,10 +840,11 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %dir %{_includedir}/systemd
 %{_libdir}/libudev.so
 %{_libdir}/libsystemd.so
-%{_libdir}/libsystemd-daemon.so
-%{_libdir}/libsystemd-login.so
-%{_libdir}/libsystemd-journal.so
-%{_libdir}/libsystemd-id128.so
+### JSYNACEK - compat
+#%{_libdir}/libsystemd-daemon.so
+#%{_libdir}/libsystemd-login.so
+#%{_libdir}/libsystemd-journal.so
+#%{_libdir}/libsystemd-id128.so
 %{_includedir}/systemd/sd-daemon.h
 %{_includedir}/systemd/sd-login.h
 %{_includedir}/systemd/sd-journal.h
@@ -857,10 +858,11 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_includedir}/libudev.h
 %{_libdir}/pkgconfig/libudev.pc
 %{_libdir}/pkgconfig/libsystemd.pc
-%{_libdir}/pkgconfig/libsystemd-daemon.pc
-%{_libdir}/pkgconfig/libsystemd-login.pc
-%{_libdir}/pkgconfig/libsystemd-journal.pc
-%{_libdir}/pkgconfig/libsystemd-id128.pc
+### JSYNACEK - compat
+#%{_libdir}/pkgconfig/libsystemd-daemon.pc
+#%{_libdir}/pkgconfig/libsystemd-login.pc
+#%{_libdir}/pkgconfig/libsystemd-journal.pc
+#%{_libdir}/pkgconfig/libsystemd-id128.pc
 %{_mandir}/man3/*
 
 %files sysv
