@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        233
-Release:        0.2.rh7
+Release:        0.3.rh7
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -114,7 +114,6 @@ Patch5: tests--don-t-test-hostname-if-it-looks-like-an-id128.patch
 Patch6: tests--skip-process-1-tests-if-systemd-not-is-running.patch
 #
 Patch7: tests--don-t-run-private-device-tests-if-running-in-a-container.patch
-#
 Patch8: build-sys--conditionally-disable-LTO-if-requested.patch
 Patch9: logind--accept-empty-string-and--infinity--for-UserTasksMax.patch
 Patch10: core--add-cgroup-CPU-controller-support-on-the-unified-hierarchy.patch
@@ -261,11 +260,11 @@ systemd-journal-remote, and systemd-journal-upload.
 ### rev %patch5 -p1
 ### rev %patch6 -p1
 #%patch7 -p1
-#%patch8 -p1
+### rev #%patch8 -p1
 ### rev %patch9 -p1
 ### rev %patch10 -p1
-#%patch11 -p1
-#%patch12 -p1
+%patch11 -p1
+### rev #%patch12 -p1
 
 
 
@@ -693,7 +692,6 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %exclude %{system_unit_dir}/*hwdb*
 %exclude %{system_unit_dir}/*/*hwdb*
 %exclude %{system_unit_dir}/systemd-vconsole-setup.service
-########%exclude %{system_unit_dir}/*/systemd-vconsole-setup.service
 %exclude %{system_unit_dir}/kmod-static-nodes.service
 %exclude %{system_unit_dir}/*/kmod-static-nodes.service
 %exclude %{system_unit_dir}/systemd-tmpfiles-setup-dev.service
