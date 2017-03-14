@@ -117,7 +117,6 @@ Patch7: tests--don-t-run-private-device-tests-if-running-in-a-container.patch
 Patch8: build-sys--conditionally-disable-LTO-if-requested.patch
 Patch9: logind--accept-empty-string-and--infinity--for-UserTasksMax.patch
 Patch10: core--add-cgroup-CPU-controller-support-on-the-unified-hierarchy.patch
-#
 Patch11: core--introduce-UseRootFileSystemNamespace-option.patch
 #
 Patch12: build-sys-check-for-lz4-in-the-old-and-new-numbering.patch
@@ -263,7 +262,7 @@ systemd-journal-remote, and systemd-journal-upload.
 ### rev #%patch8 -p1
 ### rev %patch9 -p1
 ### rev %patch10 -p1
-%patch11 -p1
+#%patch11 -p1
 ### rev #%patch12 -p1
 
 

@@ -1,27 +1,6 @@
-commit 48b462c31bdcb7156a2d7a34d5addb8e9421e42e
-Author: Marcin Pawlowski <mpawlowski@fb.com>
-Date:   Wed Aug 10 16:01:06 2016 -0700
-
-    yummy:patchX:core--introduce-UseRootFileSystemNamespace-option.patch
-
-core: introduce UseRootFileSystemNamespace option
-
-    
-    Allow user to specify that unit has to run in init's files system
-    namespace. Previously it was possible, iff none of the file system
-    namespace related option was set (but documentation gave no such
-    warranty). I wanted to have a formal and documented option which
-    forces such behavior. This option is incompatible with: PrivateTmp=,
-    PrivateDevices=, ProtectSystem=, ProtectHome=, ReadOnlyPaths=,
-    InaccessiblePaths=, ReadWritePaths=, MountFlags=, meaning it
-    cannot be set to true, if any of the listed options has non default
-    value.
-
-NOTE: jsynacek: forward-ported from 231 to 233
-
 diff -rup systemd-233/man/systemd.exec.xml systemd-233-new/man/systemd.exec.xml
 --- systemd-233/man/systemd.exec.xml	2017-03-01 22:43:06.000000000 +0100
-+++ systemd-233-new/man/systemd.exec.xml	2017-03-14 16:10:08.282034369 +0100
++++ systemd-233-new/man/systemd.exec.xml	2017-03-14 16:33:38.099878612 +0100
 @@ -1203,6 +1203,26 @@
        </varlistentry>
  
@@ -49,6 +28,31 @@ diff -rup systemd-233/man/systemd.exec.xml systemd-233-new/man/systemd.exec.xml
          <term><varname>MountFlags=</varname></term>
  
          <listitem><para>Takes a mount propagation flag: <option>shared</option>, <option>slave</option> or
+diff -rup systemd-233/src/core/execute.c systemd-233-new/src/core/execute.c
+--- systemd-233/src/core/execute.c	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/src/core/execute.c	2017-03-14 16:35:11.276863140 +0100
+@@ -2613,7 +2613,9 @@ static int exec_child(
+                 }
+         }
+ 
+-        needs_mount_namespace = exec_needs_mount_namespace(context, params, runtime);
++        needs_mount_namespace =
++                !context->use_root_file_system_namespace &&
++                exec_needs_mount_namespace(context, params, runtime);
+         if (needs_mount_namespace) {
+                 r = apply_mount_namespace(unit, command, context, params, runtime);
+                 if (r < 0) {
+diff -rup systemd-233/src/core/execute.h systemd-233-new/src/core/execute.h
+--- systemd-233/src/core/execute.h	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/src/core/execute.h	2017-03-14 16:35:39.227858499 +0100
+@@ -180,6 +180,7 @@ struct ExecContext {
+         bool private_users;
+         ProtectSystem protect_system;
+         ProtectHome protect_home;
++        bool use_root_file_system_namespace;
+         bool protect_kernel_tunables;
+         bool protect_kernel_modules;
+         bool protect_control_groups;
 diff -rup systemd-233/src/core/load-fragment.c systemd-233-new/src/core/load-fragment.c
 --- systemd-233/src/core/load-fragment.c	2017-03-01 22:43:06.000000000 +0100
 +++ systemd-233-new/src/core/load-fragment.c	2017-03-14 16:10:08.284034368 +0100
@@ -95,3 +99,14 @@ diff -rup systemd-233/src/core/load-fragment.c systemd-233-new/src/core/load-fra
          }
  
          free(u->fragment_path);
+diff -rup systemd-233/src/core/load-fragment-gperf.gperf.m4 systemd-233-new/src/core/load-fragment-gperf.gperf.m4
+--- systemd-233/src/core/load-fragment-gperf.gperf.m4	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/src/core/load-fragment-gperf.gperf.m4	2017-03-14 16:33:01.683884659 +0100
+@@ -94,6 +94,7 @@ $1.BindPaths,                    config_
+ $1.BindReadOnlyPaths,            config_parse_bind_paths,            0,                             offsetof($1, exec_context)
+ $1.PrivateTmp,                   config_parse_bool,                  0,                             offsetof($1, exec_context.private_tmp)
+ $1.PrivateDevices,               config_parse_bool,                  0,                             offsetof($1, exec_context.private_devices)
++$1.UseRootFileSystemNamespace,   config_parse_bool,                  0,                             offsetof($1, exec_context.use_root_file_system_namespace)   
+ $1.ProtectKernelTunables,        config_parse_bool,                  0,                             offsetof($1, exec_context.protect_kernel_tunables)
+ $1.ProtectKernelModules,         config_parse_bool,                  0,                             offsetof($1, exec_context.protect_kernel_modules)
+ $1.ProtectControlGroups,         config_parse_bool,                  0,                             offsetof($1, exec_context.protect_control_groups)
