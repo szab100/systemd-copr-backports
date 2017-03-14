@@ -837,7 +837,7 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
  #/var/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
 %{_sysconfdir}/systemd/system/dbus-org.freedesktop.resolve1.service
 %{_datadir}/polkit-1/rules.d/systemd-networkd.rules
-%{_localstatedir}/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
+%{_localstatedir}/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
 
 %files libs
 %{_libdir}/libnss_myhostname.so.2
