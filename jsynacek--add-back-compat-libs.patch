@@ -1,0 +1,205 @@
+diff -rup systemd-233/configure.ac systemd-233-new/configure.ac
+--- systemd-233/configure.ac	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/configure.ac	2017-03-14 12:52:47.489931362 +0100
+@@ -408,6 +408,17 @@ AS_IF([test "x$have_utmp" = "xyes"], [AC
+ AM_CONDITIONAL([HAVE_UTMP], [test "x$have_utmp" = "xyes"])
+ 
+ # ------------------------------------------------------------------------------
++have_compat_libs=no
++AC_ARG_ENABLE([compat_libs], AS_HELP_STRING([--enable-compat-libs],[Enable creation of compatibility libraries]),
++                [case "${enableval}" in
++                        yes) have_compat_libs=yes ;;
++                        no) have_compat_libs=no ;;
++                        *) AC_MSG_ERROR(bad value ${enableval} for --enable-compat-libs) ;;
++                esac],
++                [have_compat_libs=no])
++AM_CONDITIONAL([ENABLE_COMPAT_LIBS], [test "$have_compat_libs" = "yes"])
++
++# ------------------------------------------------------------------------------
+ have_coverage=no
+ AC_ARG_ENABLE(coverage, AS_HELP_STRING([--enable-coverage], [enable test coverage]))
+ if test "x$enable_coverage" = "xyes" ; then
+@@ -1722,6 +1733,7 @@ AC_MSG_RESULT([
+         test coverage:                     ${have_coverage}
+         Split /usr:                        ${enable_split_usr}
+         SysV compatibility:                ${SYSTEM_SYSV_COMPAT}
++        compatibility libraries:           ${have_compat_libs}
+         utmp/wtmp support:                 ${have_utmp}
+         ldconfig support:                  ${enable_ldconfig}
+         hibernate support:                 ${enable_hibernate}
+Only in systemd-233-new: configure.ac.orig
+Only in systemd-233-new: FB--add-back-compat-libs.patch
+diff -rup systemd-233/.gitignore systemd-233-new/.gitignore
+--- systemd-233/.gitignore	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/.gitignore	2017-03-14 12:52:47.487931362 +0100
+@@ -41,6 +41,7 @@
+ /image.raw
+ /install-tree
+ /journalctl
++/libsystemd-*.c
+ /libtool
+ /linuxx64.efi.stub
+ /localectl
+Only in systemd-233-new: .gitignore.orig
+diff -rup systemd-233/Makefile.am systemd-233-new/Makefile.am
+--- systemd-233/Makefile.am	2017-03-01 22:43:06.000000000 +0100
++++ systemd-233-new/Makefile.am	2017-03-14 12:52:47.488931362 +0100
+@@ -46,6 +46,24 @@ LIBSYSTEMD_CURRENT=18
+ LIBSYSTEMD_REVISION=0
+ LIBSYSTEMD_AGE=18
+ 
++# The following four libraries only exist for compatibility reasons,
++# their version info should not be bumped anymore
++LIBSYSTEMD_LOGIN_CURRENT=9
++LIBSYSTEMD_LOGIN_REVISION=3
++LIBSYSTEMD_LOGIN_AGE=9
++
++LIBSYSTEMD_DAEMON_CURRENT=0
++LIBSYSTEMD_DAEMON_REVISION=12
++LIBSYSTEMD_DAEMON_AGE=0
++
++LIBSYSTEMD_ID128_CURRENT=0
++LIBSYSTEMD_ID128_REVISION=28
++LIBSYSTEMD_ID128_AGE=0
++
++LIBSYSTEMD_JOURNAL_CURRENT=11
++LIBSYSTEMD_JOURNAL_REVISION=5
++LIBSYSTEMD_JOURNAL_AGE=11
++
+ # Dirs of external packages
+ dbuspolicydir=@dbuspolicydir@
+ dbussessionservicedir=@dbussessionservicedir@
+@@ -6236,6 +6254,131 @@ EXTRA_DIST += \
+ 	test/loopy.service.d/compat.conf
+ 
+ # ------------------------------------------------------------------------------
++if ENABLE_COMPAT_LIBS
++libsystemd-%.c: src/compat-libs/libsystemd-%.sym
++	$(AM_V_at)$(MKDIR_P) $(dir $@)
++	$(AM_V_GEN)sed -r -n 's/^ +(sd_.*);/obsolete_lib(\1,$(notdir $(basename $<)));/p' <$< >$@
++
++BUILT_SOURCES += \
++	libsystemd-journal.c \
++	libsystemd-login.c \
++	libsystemd-id128.c \
++	libsystemd-daemon.c
++
++nodist_libsystemd_journal_la_SOURCES = \
++	libsystemd-journal.c
++
++libsystemd_journal_la_SOURCES = \
++	src/compat-libs/libsystemd-journal.sym
++
++libsystemd_journal_la_CPPFLAGS = \
++	$(AM_CPPFLAGS) \
++	-imacros$(top_srcdir)/src/compat-libs/linkwarning.h
++
++libsystemd_journal_la_LDFLAGS = \
++	$(AM_LDFLAGS) \
++	-version-info $(LIBSYSTEMD_JOURNAL_CURRENT):$(LIBSYSTEMD_JOURNAL_REVISION):$(LIBSYSTEMD_JOURNAL_AGE) \
++	-Wl,--version-script=$(top_srcdir)/src/compat-libs/libsystemd-journal.sym
++
++libsystemd_journal_la_LIBADD = \
++	libsystemd-journal-internal.la \
++	libsystemd-internal.la \
++	libbasic.la
++
++nodist_libsystemd_login_la_SOURCES = \
++	libsystemd-login.c
++
++libsystemd_login_la_SOURCES = \
++	src/compat-libs/libsystemd-login.sym
++
++libsystemd_login_la_CPPFLAGS = \
++	$(AM_CPPFLAGS) \
++	-imacros$(top_srcdir)/src/compat-libs/linkwarning.h
++
++libsystemd_login_la_LDFLAGS = \
++	$(AM_LDFLAGS) \
++	-version-info $(LIBSYSTEMD_LOGIN_CURRENT):$(LIBSYSTEMD_LOGIN_REVISION):$(LIBSYSTEMD_LOGIN_AGE) \
++	-Wl,--version-script=$(top_srcdir)/src/compat-libs/libsystemd-login.sym
++
++libsystemd_login_la_LIBADD = \
++	 libsystemd-internal.la \
++	 libbasic.la
++
++nodist_libsystemd_id128_la_SOURCES = \
++	libsystemd-id128.c
++
++libsystemd_id128_la_SOURCES = \
++	src/compat-libs/libsystemd-id128.sym
++
++libsystemd_id128_la_CPPFLAGS = \
++	$(AM_CPPFLAGS) \
++	-imacros$(top_srcdir)/src/compat-libs/linkwarning.h
++
++libsystemd_id128_la_LDFLAGS = \
++	$(AM_LDFLAGS) \
++	-version-info $(LIBSYSTEMD_ID128_CURRENT):$(LIBSYSTEMD_ID128_REVISION):$(LIBSYSTEMD_ID128_AGE) \
++	-Wl,--version-script=$(top_srcdir)/src/compat-libs/libsystemd-id128.sym
++
++libsystemd_id128_la_LIBADD = \
++	 libsystemd-internal.la \
++	 libbasic.la
++
++nodist_libsystemd_daemon_la_SOURCES = \
++	libsystemd-daemon.c
++
++libsystemd_daemon_la_SOURCES = \
++	src/compat-libs/libsystemd-daemon.sym
++
++libsystemd_daemon_la_CPPFLAGS = \
++	$(AM_CPPFLAGS) \
++	-imacros$(top_srcdir)/src/compat-libs/linkwarning.h
++
++libsystemd_daemon_la_LDFLAGS = \
++	$(AM_LDFLAGS) \
++	-version-info $(LIBSYSTEMD_DAEMON_CURRENT):$(LIBSYSTEMD_DAEMON_REVISION):$(LIBSYSTEMD_DAEMON_AGE) \
++	-Wl,--version-script=$(top_srcdir)/src/compat-libs/libsystemd-daemon.sym
++
++libsystemd_daemon_la_LIBADD = \
++	 libsystemd-internal.la \
++	 libbasic.la
++
++lib_LTLIBRARIES += \
++	libsystemd-journal.la \
++	libsystemd-login.la \
++	libsystemd-id128.la \
++	libsystemd-daemon.la
++
++pkgconfiglib_DATA += \
++	src/compat-libs/libsystemd-journal.pc \
++	src/compat-libs/libsystemd-login.pc \
++	src/compat-libs/libsystemd-id128.pc \
++	src/compat-libs/libsystemd-daemon.pc
++
++# move lib from $(libdir) to $(rootlibdir) and update devel link, if needed
++compat-lib-install-hook:
++	libname=libsystemd-login.so && $(move-to-rootlibdir)
++	libname=libsystemd-journal.so && $(move-to-rootlibdir)
++	libname=libsystemd-id128.so && $(move-to-rootlibdir)
++	libname=libsystemd-daemon.so && $(move-to-rootlibdir)
++
++compat-lib-uninstall-hook:
++	rm -f $(DESTDIR)$(rootlibdir)/libsystemd-login.so*
++	rm -f $(DESTDIR)$(rootlibdir)/libsystemd-journal.so*
++	rm -f $(DESTDIR)$(rootlibdir)/libsystemd-id128.so*
++	rm -f $(DESTDIR)$(rootlibdir)/libsystemd-daemon.so*
++
++INSTALL_EXEC_HOOKS += compat-lib-install-hook
++UNINSTALL_EXEC_HOOKS += compat-lib-uninstall-hook
++endif
++
++EXTRA_DIST += \
++	src/compat-libs/linkwarning.h \
++	src/compat-libs/libsystemd-journal.pc.in \
++	src/compat-libs/libsystemd-login.pc.in \
++	src/compat-libs/libsystemd-id128.pc.in \
++	src/compat-libs/libsystemd-daemon.pc.in
++
++# ------------------------------------------------------------------------------
+ substitutions = \
+        '|rootlibdir=$(rootlibdir)|' \
+        '|rootlibexecdir=$(rootlibexecdir)|' \
+Only in systemd-233-new: Makefile.am.orig
+Only in systemd-233-new/src: compat-libs

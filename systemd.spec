@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        233
-Release:        0.1.rh7
+Release:        0.2.rh7
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -105,8 +105,8 @@ Conflicts:      fedora-release < 23-0.12
 
 Patch0: 0998-resolved-create-etc-resolv-conf-symlink-at-runtime-patch.patch
 Patch1: kernel-install-grubby-patch.patch
-#
-Patch2: FB--add-back-compat-libs.patch
+#### JSYNACEK Patch2: FB--add-back-compat-libs.patch
+Patch2: jsynacek--add-back-compat-libs.patch
 #
 Patch3: FB--Add-FusionIO-device---dev-fio--persistent-storage-udev-rule.patch
 Patch4: tests--skip-udev-test-if-running-inside-a-chroot.patch
@@ -153,16 +153,16 @@ Conflicts:      systemd < 185-4
 %description libs
 Libraries for systemd and udev.
 
-#%package compat-libs
-#Summary:        systemd compatibility libraries
-#License:        LGPLv2+ and MIT
-## To reduce confusion, this package can only be installed in parallel
-## with the normal systemd-libs, same version.
-#Requires:       systemd-libs%{?_isa} = %{version}-%{release}
+%package compat-libs
+Summary:        systemd compatibility libraries
+License:        LGPLv2+ and MIT
+# To reduce confusion, this package can only be installed in parallel
+# with the normal systemd-libs, same version.
+Requires:       systemd-libs%{?_isa} = %{version}-%{release}
 
-#%description compat-libs
-#Compatibility libraries for systemd. If your package requires this
-#package, you need to update your link options and build.
+%description compat-libs
+Compatibility libraries for systemd. If your package requires this
+package, you need to update your link options and build.
 
 %package pam
 Summary:        systemd PAM module
@@ -255,7 +255,7 @@ systemd-journal-remote, and systemd-journal-upload.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-#%patch2 -p1
+%patch2 -p1
 #%patch3 -p1
 %patch4 -p1
 ### rev %patch5 -p1
@@ -302,7 +302,7 @@ CONFIGURE_OPTS=(
         ## JSYNACEK
         --with-dbuspolicydir=/etc/dbus-1/system.d
         --without-python
-        ##--enable-compat-libs
+        --enable-compat-libs
 )
 
 %configure "${CONFIGURE_OPTS[@]}"
@@ -513,8 +513,8 @@ fi
 %post libs -p /sbin/ldconfig
 %postun libs -p /sbin/ldconfig
 
-#%post compat-libs -p /sbin/ldconfig
-#%postun compat-libs -p /sbin/ldconfig
+%post compat-libs -p /sbin/ldconfig
+%postun compat-libs -p /sbin/ldconfig
 
 %global udev_services systemd-udev{d,-settle,-trigger}.service systemd-udevd-{control,kernel}.socket systemd-timesyncd.service
 
@@ -847,12 +847,11 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_libdir}/libsystemd.so.*
 %license LICENSE.LGPL2.1
 
-### JSYNACEK - tmp
-#%files compat-libs
-#%{_libdir}/libsystemd-daemon.so.*
-#%{_libdir}/libsystemd-login.so.*
-#%{_libdir}/libsystemd-journal.so.*
-#%{_libdir}/libsystemd-id128.so.*
+%files compat-libs
+%{_libdir}/libsystemd-daemon.so.*
+%{_libdir}/libsystemd-login.so.*
+%{_libdir}/libsystemd-journal.so.*
+%{_libdir}/libsystemd-id128.so.*
 
 %files pam
 %{_libdir}/security/pam_systemd.so
@@ -861,11 +860,10 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %dir %{_includedir}/systemd
 %{_libdir}/libudev.so
 %{_libdir}/libsystemd.so
-### JSYNACEK - compat
-#%{_libdir}/libsystemd-daemon.so
-#%{_libdir}/libsystemd-login.so
-#%{_libdir}/libsystemd-journal.so
-#%{_libdir}/libsystemd-id128.so
+%{_libdir}/libsystemd-daemon.so
+%{_libdir}/libsystemd-login.so
+%{_libdir}/libsystemd-journal.so
+%{_libdir}/libsystemd-id128.so
 %{_includedir}/systemd/sd-daemon.h
 %{_includedir}/systemd/sd-login.h
 %{_includedir}/systemd/sd-journal.h
