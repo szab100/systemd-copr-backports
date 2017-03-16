@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        233
-Release:        0.3.rh7
+Release:        0.4%{?dist}
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -53,7 +53,6 @@ BuildRequires:  libgcrypt-devel
 BuildRequires:  gnutls-devel
 BuildRequires:  qrencode-devel
 BuildRequires:  libmicrohttpd-devel
-#BuildRequires:  libxkbcommon-devel
 BuildRequires:  iptables-devel
 BuildRequires:  libxslt
 BuildRequires:  docbook-style-xsl
@@ -83,8 +82,6 @@ Requires:       %{name}-pam = %{version}-%{release}
 Requires:       %{name}-libs = %{version}-%{release}
 Requires:       diffutils
 Requires:       util-linux
-# don't explicitly require libxkbcommon
-#Requires:       libxkbcommon%{?_isa}
 Provides:       /bin/systemctl
 Provides:       /sbin/shutdown
 Provides:       syslog
@@ -107,31 +104,16 @@ Patch0: 0998-resolved-create-etc-resolv-conf-symlink-at-runtime-patch.patch
 Patch1: kernel-install-grubby-patch.patch
 #### JSYNACEK Patch2: FB--add-back-compat-libs.patch
 Patch2: jsynacek--add-back-compat-libs.patch
-#
 Patch3: FB--Add-FusionIO-device---dev-fio--persistent-storage-udev-rule.patch
 Patch4: tests--skip-udev-test-if-running-inside-a-chroot.patch
 Patch5: tests--don-t-test-hostname-if-it-looks-like-an-id128.patch
 Patch6: tests--skip-process-1-tests-if-systemd-not-is-running.patch
-#
 Patch7: tests--don-t-run-private-device-tests-if-running-in-a-container.patch
 Patch8: build-sys--conditionally-disable-LTO-if-requested.patch
 Patch9: logind--accept-empty-string-and--infinity--for-UserTasksMax.patch
 Patch10: core--add-cgroup-CPU-controller-support-on-the-unified-hierarchy.patch
 Patch11: core--introduce-UseRootFileSystemNamespace-option.patch
-#
 Patch12: build-sys-check-for-lz4-in-the-old-and-new-numbering.patch
-
-
-
-
-
-
-
-
-
-
-
-
 
 %description
 systemd is a system and service manager for Linux, compatible with
@@ -254,29 +236,16 @@ systemd-journal-remote, and systemd-journal-upload.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-#%patch3 -p1
+%patch3 -p1
 %patch4 -p1
 ### rev %patch5 -p1
 ### rev %patch6 -p1
-#%patch7 -p1
+### rev %patch7 -p1
 ### rev #%patch8 -p1
 ### rev %patch9 -p1
 ### rev %patch10 -p1
-#%patch11 -p1
+%patch11 -p1
 ### rev #%patch12 -p1
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 %ifarch ppc ppc64 ppc64le
 # Disable link warnings, somehow they cause the link to fail.
@@ -296,11 +265,10 @@ CONFIGURE_OPTS=(
         --with-rc-local-script-path-start=/etc/rc.d/rc.local
         --without-kill-user-processes
         --disable-lto
-	--disable-xkbcommon
-        ## JSYNACEK
+        --disable-xkbcommon
         --with-dbuspolicydir=/etc/dbus-1/system.d
-        --without-python
         --enable-compat-libs
+        --without-python
 )
 
 %configure "${CONFIGURE_OPTS[@]}"
@@ -335,6 +303,7 @@ install -m 0755 %{SOURCE3} %{buildroot}%{_bindir}/
 touch %{buildroot}/etc/crypttab
 chmod 600 %{buildroot}/etc/crypttab
 
+#### JSYNACEK: What is this? Why is it here?
 ln -s ../sysctl.conf %{buildroot}/etc/sysctl.d/99-sysctl.conf
 
 # We create all wants links manually at installation time to make sure
@@ -563,16 +532,6 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 
 %global _docdir_fmt %{name}
 
-###### JSYNACEK - new files
- #/usr/bin/systemd-mount
- #/usr/bin/systemd-umount
- #/usr/lib/environment.d/99-environment.conf
- #/usr/lib/systemd/user-environment-generators/30-systemd-environment-d-generator
- #/usr/lib64/libnss_systemd.so.2
- #/etc/systemd/system/dbus-org.freedesktop.resolve1.service
- #/usr/share/polkit-1/rules.d/systemd-networkd.rules
- #/var/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
-######
 %files -f %{name}.lang
 %{!?_licensedir:%global license %%doc}
 %doc %{_pkgdocdir}
@@ -829,9 +788,6 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 
 %ghost %dir %{_localstatedir}/lib/rpm-state/systemd
 
- #/etc/systemd/system/dbus-org.freedesktop.resolve1.service
- #/usr/share/polkit-1/rules.d/systemd-networkd.rules
- #/var/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
 %{_sysconfdir}/systemd/system/dbus-org.freedesktop.resolve1.service
 %{_datadir}/polkit-1/rules.d/systemd-networkd.rules
 %{_localstatedir}/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
@@ -895,8 +851,6 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{system_unit_dir}/*hwdb*
 %{system_unit_dir}/*/*hwdb*
 %{system_unit_dir}/systemd-vconsole-setup.service
-### JSYNACEK - this disappeared
-#%{system_unit_dir}/*/systemd-vconsole-setup.service
 %{system_unit_dir}/kmod-static-nodes.service
 %{system_unit_dir}/*/kmod-static-nodes.service
 %{system_unit_dir}/systemd-tmpfiles-setup-dev.service
