@@ -13,7 +13,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        233
-Release:        0.4%{?dist}
+Release:        0.5%{?dist}
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -176,8 +176,6 @@ SysV compatibility tools for systemd
 Summary: Rule-based device node and kernel event manager
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 Requires(post):   systemd
-Requires(preun):  systemd
-Requires(postun): systemd
 Requires(post): grep
 Requires:       kmod >= 18-4
 # obsolete parent package so that dnf will install new subpackage on upgrade (#1260394)
@@ -304,6 +302,7 @@ touch %{buildroot}/etc/crypttab
 chmod 600 %{buildroot}/etc/crypttab
 
 #### JSYNACEK: What is this? Why is it here?
+#    To keep backward compat. systemd-sysctl doesn't parse /etc/sysctl.conf.
 ln -s ../sysctl.conf %{buildroot}/etc/sysctl.d/99-sysctl.conf
 
 # We create all wants links manually at installation time to make sure
@@ -446,42 +445,9 @@ fi
 # remove obsolete systemd-readahead file
 rm -f /.readahead > /dev/null 2>&1 || :
 
-%preun
-if [ $1 -eq 0 ] ; then
-        systemctl disable \
-                remote-fs.target \
-                getty@.service \
-                serial-getty@.service \
-                console-getty.service \
-                console-shell.service \
-                debug-shell.service \
-                systemd-readahead-replay.service \
-                systemd-readahead-collect.service \
-                systemd-networkd.service \
-                systemd-networkd-wait-online.service \
-                systemd-resolved.service \
-                >/dev/null 2>&1 || :
-
-        rm -f /etc/systemd/system/default.target >/dev/null 2>&1 || :
-
-        if [ -f /etc/nsswitch.conf ] ; then
-                sed -i.bak -e '
-                        /^hosts:/ !b
-                        s/[[:blank:]]\+myhostname\>//
-                        ' /etc/nsswitch.conf >/dev/null 2>&1 || :
-
-                sed -i.bak -e '
-                        /^hosts:/ !b
-                        s/[[:blank:]]\+mymachines\>//
-                        ' /etc/nsswitch.conf >/dev/null 2>&1 || :
-        fi
-fi
-
 %post libs -p /sbin/ldconfig
-%postun libs -p /sbin/ldconfig
 
 %post compat-libs -p /sbin/ldconfig
-%postun compat-libs -p /sbin/ldconfig
 
 %global udev_services systemd-udev{d,-settle,-trigger}.service systemd-udevd-{control,kernel}.socket systemd-timesyncd.service
 
@@ -500,12 +466,6 @@ grep -q -E '^KEYMAP="?fi-latin[19]"?' /etc/vconsole.conf 2>/dev/null &&
     sed -i.rpm.bak -r 's/^KEYMAP="?fi-latin[19]"?/KEYMAP="fi"/' /etc/vconsole.conf
 
 exit 0
-
-%preun udev
-%systemd_preun %udev_services
-
-%postun udev
-%systemd_postun_with_restart %udev_services
 
 %pre journal-remote
 getent group systemd-journal-gateway >/dev/null 2>&1 || groupadd -r -g 191 systemd-journal-gateway 2>&1 || :
