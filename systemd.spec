@@ -12,8 +12,8 @@
 
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
-Version:        233
-Release:        0.6%{?dist}
+Version:        234
+Release:        0.1%{?dist}
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -939,6 +939,9 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %{_mandir}/man[1578]/systemd-nspawn.*
 
 %changelog
+* Tue Jul 18 2017 Jan Synáček <jsynacek@redhat.com> - 234-0.1
+- update to v234
+
 * Wed Aug 10 2016 Davide Cavalca <dcavalca@fb.com> - 231-2.fb3
 - add mpawlowski root filesystem namespace patch for #12621017
 - add htejun patch for cgroup2 cpu controller (PR#3905)
