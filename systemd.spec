@@ -233,7 +233,7 @@ systemd-journal-remote, and systemd-journal-upload.
 %setup -q
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
+%patch2 -p2
 %patch3 -p1
 %patch4 -p1
 ### rev %patch5 -p1
@@ -755,8 +755,8 @@ getent passwd systemd-journal-upload >/dev/null 2>&1 || useradd -r -l -g systemd
 %ghost %dir %{_localstatedir}/lib/rpm-state/systemd
 
 %{_sysconfdir}/systemd/system/dbus-org.freedesktop.resolve1.service
+%{_sysconfdir}/systemd/system/dbus-org.freedesktop.network1.service
 %{_datadir}/polkit-1/rules.d/systemd-networkd.rules
-%{_localstatedir}/lib/polkit-1/localauthority/10-vendor.d/systemd-networkd.pkla
 
 %files libs
 %{_libdir}/libnss_myhostname.so.2
